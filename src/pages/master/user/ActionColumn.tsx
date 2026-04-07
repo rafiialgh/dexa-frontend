@@ -104,7 +104,6 @@ function EditUserSheet({
     register,
     handleSubmit,
     control,
-    reset,
     formState: { errors },
   } = useForm<UpdateUserValues>({
     resolver: zodResolver(updateUserSchema),
