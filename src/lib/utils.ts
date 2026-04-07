@@ -28,7 +28,7 @@ export const ROLE_LABELS: Record<string, string> = {
 
 export function formatSnakeCase(str: string | undefined): string {
   if (!str) return "";
-  
+
   if (ROLE_LABELS[str.toUpperCase()]) {
     return ROLE_LABELS[str.toUpperCase()];
   }
@@ -49,7 +49,12 @@ export function formatTime(isoString: string | null | undefined): string {
   try {
     const date = new Date(isoString);
     if (isNaN(date.getTime())) return "--:--";
-    return format(date, "HH:mm");
+    return date.toLocaleTimeString("id-ID", {
+      timeZone: "Asia/Jakarta",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    });
   } catch (e) {
     return "--:--";
   }
@@ -57,7 +62,8 @@ export function formatTime(isoString: string | null | undefined): string {
 
 export function formatDateFull(date: Date | null | undefined): string {
   if (!date) return "";
-  return date.toLocaleDateString("en-US", {
+  return date.toLocaleDateString("id-ID", {
+    timeZone: "Asia/Jakarta",
     weekday: "long",
     year: "numeric",
     month: "long",
