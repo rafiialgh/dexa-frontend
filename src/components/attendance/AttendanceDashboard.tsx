@@ -53,7 +53,7 @@ export function AttendanceDashboard({ userId, title, subtitle }: AttendanceDashb
     return (
       <div className="flex flex-col gap-1.5 mt-1">
         <div className="flex items-center gap-1.5">
-          <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+          <div className="h-1.5 w-1.5 bg-emerald-500" />
           <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-tighter">
             {formatTime(record.checkIn)} - {formatTime(record.checkOut)}
           </span>
@@ -107,7 +107,7 @@ export function AttendanceDashboard({ userId, title, subtitle }: AttendanceDashb
       </div>
 
       <div className="space-y-4">
-        <div className="flex items-center gap-2 text-xs text-muted-foreground bg-zinc-50 p-3 border border-dashed rounded-lg">
+        <div className="flex items-center gap-2 text-xs text-muted-foreground bg-zinc-50 p-3 border border-dashed">
           <Info className="h-4 w-4 text-blue-500" />
           Click on any date cell to view detailed attendance records{userId ? " for this employee" : ""} or perform check-in/out actions.
         </div>
