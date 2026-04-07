@@ -1,21 +1,48 @@
 import { Link } from "react-router-dom";
+import { cn } from "../../../lib/utils";
+import { Label } from "../../../components/ui/label";
+import { Input } from "../../../components/ui/input";
+import { Eye, EyeOff } from 'lucide-react';
+import { useState } from "react";
+import { Button } from "../../../components/ui/button";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loginSchema, type LoginValues } from "../../../services/auth/auth.service";
+import { useAuth } from "../../../hooks/useAuth";
 
 export default function LoginPage() {
+  const [showPassword, setShowPassword] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  });
+
+  const { mutateAsync: login, isPending } = useAuth();
+
+  const onSubmit = (data: LoginValues) => {
+    login(data);
+  };
+
   return (
     <div className='grid min-h-svh lg:grid-cols-2'>
-      {/* Left section */}
       <div className='flex flex-col gap-4 p-6 md:p-10'>
-        {/* Logo */}
         <div className='flex justify-center gap-2 md:justify-start'>
           <a href='#' className='flex items-center gap-2 font-medium'>
-            <div className='text-primary-foreground flex size-14 items-center justify-center'>
-              <img src='/assets/image/logos/asa-logo.png' alt='' />
+            <div className='text-primary-foreground flex size-28 items-center justify-center'>
+              <img src='/image/dexa.png' alt='' />
             </div>
-            <p className='font-semibold whitespace-pre-line leading-4.5'>
-              {`Asa
-                Kreasi 
-                Interasia`}
-            </p>
+            {/* <p className='font-semibold whitespace-pre-line leading-4.5'>
+              {`Dexa 
+              Group`}
+            </p> */}
           </a>
         </div>
 
@@ -23,8 +50,7 @@ export default function LoginPage() {
           <div className='w-full max-w-sm'>
             <form
               onSubmit={handleSubmit(onSubmit)}
-              className={cn('flex flex-col gap-6', className)}
-              {...props}
+              className={cn('flex flex-col gap-6')}
             >
               <div className='flex flex-col items-center gap-2 text-center'>
                 <h1 className='text-2xl font-bold'>Login to your account</h1>
@@ -88,12 +114,6 @@ export default function LoginPage() {
                   {isPending ? 'Logging in...' : 'Login'}
                 </Button>
               </div>
-              {/* <div className='text-center text-sm'>
-          Don&apos;t have an account?{' '}
-          <Link to='/register' className='underline underline-offset-4'>
-            Sign up
-          </Link>
-        </div> */}
             </form>
           </div>
         </div>
@@ -101,7 +121,7 @@ export default function LoginPage() {
 
       <div className='bg-muted relative hidden lg:block'>
         <img
-          src={randomImage}
+          src={'/image/login-page.webp'}
           alt='Image'
           loading='eager'
           fetchPriority='high'
@@ -110,4 +130,4 @@ export default function LoginPage() {
       </div>
     </div>
   )
-})
+}

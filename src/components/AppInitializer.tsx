@@ -1,0 +1,58 @@
+import { useEffect, useRef } from 'react';
+import { useDispatch } from 'react-redux';
+import { clearUser, setUser } from '@/store/authSlice';
+import SplashScreen from '@/components/SplashScreen';
+import { useMe } from '@/hooks/useAuth';
+
+const AppInitializer = ({ children }: { children: React.ReactNode }) => {
+  const dispatch = useDispatch();
+  const hasInitialized = useRef(false);
+
+  const isStaging = import.meta.env.MODE === 'staging';
+
+  const { data, isLoading, isSuccess, isError } = useMe();
+
+  console.log(data)
+
+  useEffect(() => {
+    if (isSuccess && data?.data) {
+      const userData = data.data;
+
+      if (userData?.id) {
+        dispatch(setUser({
+          id: userData.id,
+          name: userData.name,
+          email: userData.email,
+          role: userData.role,
+          status: userData.status || 'active',
+        }));
+
+        hasInitialized.current = true;
+      }
+    }
+  }, [isSuccess, data, dispatch]);
+
+  useEffect(() => {
+    if (isError) {
+      console.log('Failed to fetch user data, clearing auth');
+      dispatch(clearUser());
+      hasInitialized.current = true;
+      window.location.href = '/login';
+    }
+  }, [isError, dispatch]);
+
+  if (isLoading) return <SplashScreen />;
+
+  return (
+    <>
+      {isStaging && (
+        <div className="w-full bg-yellow-100 text-yellow-900 text-center py-1 text-xs font-bold uppercase tracking-widest border border-yellow-200 z-50">
+          Staging - Testing Environment
+        </div>
+      )}
+      {children}
+    </>
+  )
+};
+
+export default AppInitializer;

@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: .
+      args:
+        MODE: ${APP_ENV}
+    container_name: ${APP_CONTAINER_NAME}
+    ports:
+      - "${APP_PORT}:80"
+    restart: always
