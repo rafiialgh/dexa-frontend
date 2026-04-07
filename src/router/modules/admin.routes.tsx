@@ -1,7 +1,6 @@
 import { type RouteObject } from "react-router-dom";
 import EmptyLayout from "@/components/EmptyLayout";
 import UserPage from "@/pages/master/user";
-import UserDetail from "@/pages/master/user/UserDetail";
 import MyAttendancePage from "@/pages/attendance";
 import AllEmployeesPage from "@/pages/employees";
 import EmployeeAttendancePage from "@/pages/employees/EmployeeAttendance";
@@ -43,11 +42,6 @@ export const adminRoutes: RouteObject[] = [
                         index: true,
                         element: <UserPage />,
                         handle: { breadcrumb: "User" },
-                    },
-                    {
-                        path: ":id",
-                        element: <UserDetail />,
-                        handle: { breadcrumb: "Detail User" },
                     },
                 ],
             },

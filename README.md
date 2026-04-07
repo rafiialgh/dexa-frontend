@@ -1,73 +1,68 @@
-# React + TypeScript + Vite
+# Dexa Attendance System (Frontend)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, responsive React-based frontend for the employee attendance system, built with TypeScript, Tailwind CSS, and a robust state management layer. This application serves as the primary interface for employees and administrators in the Dexa Ecosystem.
 
-Currently, two official plugins are available:
+## Architecture Overview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Core**: React 19 with Vite for lightning-fast development and optimized production builds.
+- **State Management**: Redux Toolkit for global authentication and UI state, combined with TanStack Query for server-side data synchronization.
+- **UI System**: Built on Radix UI primitives and styled with Tailwind CSS 4, utilizing a customized Shadcn/UI component library.
+- **Form Handling**: React Hook Form with Zod validation for type-safe and performant data entry.
+- **Real-time Attendance**: Integrated with `react-webcam` for secure photo-verified check-in/out.
 
-## React Compiler
+## Quick Start (Docker - Recommended)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+This project is fully containerized and ready for production-like local testing.
 
-## Expanding the ESLint configuration
+1. **Configure Environment**:
+   Create a `.env` file in the root directory:
+   ```env
+   VITE_API_URL=http://localhost:3000
+   APP_CONTAINER_NAME=dexa-frontend
+   APP_ENV=production
+   APP_PORT=5173
+   ```
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+2. **Start the Container**:
+   ```bash
+   docker-compose up --build -d
+   ```
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+3. **Access the App**:
+   The application will be available at [http://localhost:5173](http://localhost:5173).
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Local Development (No Docker)
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+To run the frontend directly on your host machine:
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+1. **Install Dependencies**:
+   ```bash
+   npm install
+   ```
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+2. **Configure Environment**:
+   Ensure you have a `.env` file with `VITE_API_URL` pointing to your API Gateway.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+3. **Start Development Server**:
+   ```bash
+   npm run dev
+   ```
+
+## Project Structure
+
+- `src/components`: Reusable UI components, layout sections, and shadcn primitives.
+- `src/hooks`: Custom React hooks for business logic and API data fetching (TanStack Query).
+- `src/services`: API service layer for communication with the backend microservices.
+- `src/store`: Redux slices and store configuration for global application state.
+- `src/pages`: Main application routes and page-level components.
+- `src/lib`: Core utility functions, constants, and shared formatting logic.
+
+## Common Commands
+
+- **Development**: `npm run dev`
+- **Build Production**: `npm run build`
+- **Linting**: `npm run lint`
+- **Preview Build**: `npm run preview`
+
+> [!IMPORTANT]
+> **API Dependency**: This frontend requires the [Dexa API Gateway](https://github.com/rafiialgh/dexa-backend) to be running (typically on port 3000) for authentication and data management features to work.

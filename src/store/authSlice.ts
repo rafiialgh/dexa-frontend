@@ -11,11 +11,13 @@ interface User {
 interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
+  isInitializing: boolean;
 }
 
 const initialState: AuthState = {
   user: null,
   isAuthenticated: false,
+  isInitializing: true,
 };
 
 const authSlice = createSlice({
@@ -26,11 +28,16 @@ const authSlice = createSlice({
       // console.log('Setting user:', action.payload);
       state.user = action.payload;
       state.isAuthenticated = true;
+      state.isInitializing = false;
     },
     clearUser: (state) => {
       // console.log('Clearing user');
       state.user = null;
       state.isAuthenticated = false;
+      state.isInitializing = false;
+    },
+    completeInitialization: (state) => {
+      state.isInitializing = false;
     },
   },
 });
@@ -38,6 +45,7 @@ const authSlice = createSlice({
 export const {
   setUser,
   clearUser,
+  completeInitialization,
 } = authSlice.actions;
 
 export default authSlice.reducer;

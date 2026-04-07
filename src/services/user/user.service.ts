@@ -31,15 +31,6 @@ export const createUser = async (
 ): Promise<BaseResponse<User>> =>
   privateInstance.post("/user", data).then((res) => res.data)
 
-export const bulkRegister = async (
-  formData: FormData
-): Promise<BaseResponse<void>> =>
-  privateInstance.post("/user/upload", formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  }).then((res) => res.data)
-
 export const updateUser = async (
   id: string,
   data: UpdateUserValues

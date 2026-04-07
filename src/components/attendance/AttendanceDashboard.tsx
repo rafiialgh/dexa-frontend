@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 
 import { useMonthlyAttendance } from "@/hooks/useAttendance";
 import { format } from "date-fns";
+import { formatTime } from "@/lib/utils";
 
 interface AttendanceDashboardProps {
   userId?: string;
@@ -55,7 +56,7 @@ export function AttendanceDashboard({ userId, title, subtitle }: AttendanceDashb
         <div className="flex items-center gap-1.5">
           <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
           <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-tighter">
-            {record.checkIn || "--:--"} - {record.checkOut || "--:--"}
+            {formatTime(record.checkIn)} - {formatTime(record.checkOut)}
           </span>
         </div>
         {record.isLate && (

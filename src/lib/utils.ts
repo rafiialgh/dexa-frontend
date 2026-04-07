@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { useState, useEffect } from "react"
+import { format } from "date-fns"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -41,4 +42,25 @@ export function formatSnakeCase(str: string | undefined): string {
 
 export function formatRole(role: string): string {
   return formatSnakeCase(role);
+}
+
+export function formatTime(isoString: string | null | undefined): string {
+  if (!isoString) return "--:--";
+  try {
+    const date = new Date(isoString);
+    if (isNaN(date.getTime())) return "--:--";
+    return format(date, "HH:mm");
+  } catch (e) {
+    return "--:--";
+  }
+}
+
+export function formatDateFull(date: Date | null | undefined): string {
+  if (!date) return "";
+  return date.toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 }

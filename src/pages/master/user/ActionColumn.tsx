@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { MoreHorizontal, Edit, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -105,28 +105,24 @@ function EditUserSheet({
   onOpenChange: (open: boolean) => void;
 }) {
   const { data: detailResponse, isLoading: isFetching } = useUserDetail(id, open);
+  const { data: deptResponse, isLoading: isLoadingDepts } = useDepartments("", 1, 100);
+  const departments = deptResponse?.data || [];
   const updateUserMutation = useUpdateUser();
 
   const {
     register,
     handleSubmit,
     control,
-    reset,
     formState: { errors },
   } = useForm<UserFormValues>({
     resolver: zodResolver(userSchema),
+    values: detailResponse?.data ? {
+      name: detailResponse.data.name,
+      email: detailResponse.data.email,
+      role: detailResponse.data.role,
+      departmentId: detailResponse.data.departmentId || "none",
+    } : undefined
   });
-
-  useEffect(() => {
-    if (detailResponse?.data) {
-      reset({
-        name: detailResponse.data.name,
-        email: detailResponse.data.email,
-        role: detailResponse.data.role,
-        departmentId: detailResponse.data.departmentId || "none",
-      });
-    }
-  }, [detailResponse, reset]);
 
   const onSubmit = (data: UserFormValues) => {
     const submissionData = {
@@ -200,11 +196,13 @@ function EditUserSheet({
                       <SelectValue placeholder="Select a role" />
                     </SelectTrigger>
                     <SelectContent>
-                      {Object.entries(ROLE_LABELS).map(([value, label]) => (
-                        <SelectItem key={value} value={value}>
-                          {label}
-                        </SelectItem>
-                      ))}
+                      {Object.entries(ROLE_LABELS)
+                        .filter(([role]) => role !== "SUPER_ADMIN")
+                        .map(([value, label]) => (
+                          <SelectItem key={value} value={value}>
+                            {label}
+                          </SelectItem>
+                        ))}
                     </SelectContent>
                   </Select>
                 )}
@@ -218,26 +216,21 @@ function EditUserSheet({
               <Controller
                 name="departmentId"
                 control={control}
-                render={({ field }) => {
-                  const { data: deptResponse, isLoading: isLoadingDepts } = useDepartments("", 1, 100);
-                  const departments = deptResponse?.data || [];
-                  
-                  return (
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <SelectTrigger id="edit-dept">
-                        <SelectValue placeholder={isLoadingDepts ? "Loading departments..." : "Select a department"} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="none">No Department</SelectItem>
-                        {departments.map((dept) => (
-                          <SelectItem key={dept.id} value={dept.id}>
-                            {dept.name} ({dept.code})
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  );
-                }}
+                render={({ field }) => (
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <SelectTrigger id="edit-dept">
+                      <SelectValue placeholder={isLoadingDepts ? "Loading departments..." : "Select a department"} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">No Department</SelectItem>
+                      {departments.map((dept) => (
+                        <SelectItem key={dept.id} value={dept.id}>
+                          {dept.name} ({dept.code})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
               />
             </div>
             <SheetFooter className="mt-4">

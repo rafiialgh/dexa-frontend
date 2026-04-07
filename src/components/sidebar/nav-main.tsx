@@ -72,7 +72,7 @@ export function NavMain({
                       const isActiveSub = location.pathname === subItem.url ||location.pathname.startsWith(subItem.url + "/")
                       return (
                         <SidebarMenuSubItem key={subItem.title}>
-                          <SidebarMenuSubButton asChild className={isActiveSub ? "bg-asa/20 text-accent-foreground transition-colors" : ""}>
+                          <SidebarMenuSubButton asChild className={isActiveSub ? "bg-primary/20 text-accent-foreground transition-colors" : ""}>
                             <Link to={subItem.url}>
                               <span>{subItem.title}</span>
                             </Link>
@@ -89,7 +89,7 @@ export function NavMain({
               <SidebarMenuButton
                 asChild
                 tooltip={item.title}
-                className={isDirectlyActive || isNestedActive ? "bg-asa/20 text-accent-foreground transition-colors" : ""}
+                className={isDirectlyActive || isNestedActive ? "bg-primary/20 text-accent-foreground transition-colors" : ""}
               >
                 <Link to={item.url}>
                   {item.icon && <item.icon />}

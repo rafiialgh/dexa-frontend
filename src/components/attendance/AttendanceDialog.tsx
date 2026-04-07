@@ -15,6 +15,7 @@ import { useState, useEffect } from "react";
 import { CameraCapture } from "./CameraCapture";
 import { useSelector } from "react-redux";
 import { type RootState } from "@/store";
+import { formatTime, formatDateFull } from "@/lib/utils";
 
 interface AttendanceDialogProps {
   date: Date | null;
@@ -45,12 +46,7 @@ export function AttendanceDialog({ date, open, onOpenChange, userId }: Attendanc
 
   if (!date) return null;
 
-  const formattedDate = date.toLocaleDateString("en-US", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  const formattedDate = formatDateFull(date);
 
   const isWeekend = date.getDay() === 0 || date.getDay() === 6;
   const isToday = date.toDateString() === new Date().toDateString();
@@ -153,7 +149,7 @@ export function AttendanceDialog({ date, open, onOpenChange, userId }: Attendanc
                       Time
                     </div>
                     <div className="text-lg font-black text-zinc-800">
-                      {detail?.checkIn?.time || "--:--"}
+                      {formatTime(detail?.checkIn?.time)}
                     </div>
                     {detail?.checkIn?.time && (
                       <div className={`flex items-center gap-1 text-[10px] font-bold ${detail.meta.isLate ? "text-amber-600" : "text-emerald-600"}`}>
@@ -198,7 +194,7 @@ export function AttendanceDialog({ date, open, onOpenChange, userId }: Attendanc
                       Time
                     </div>
                     <div className="text-lg font-black text-zinc-800">
-                      {detail?.checkOut?.time || "--:--"}
+                      {formatTime(detail?.checkOut?.time)}
                     </div>
                     {detail?.checkOut?.time && (
                       <div className="text-[10px] text-zinc-500 font-medium italic">

@@ -102,14 +102,14 @@ export function ActionColumn({ department }: ActionColumnProps) {
       </DropdownMenu>
 
       <Sheet open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <SheetContent>
+        <SheetContent className="sm:max-w-[425px]">
           <SheetHeader>
             <SheetTitle>Edit Department</SheetTitle>
             <SheetDescription>
               Update the department details.
             </SheetDescription>
           </SheetHeader>
-          <form onSubmit={handleSubmit(onEditSubmit)} className="grid gap-4 py-4">
+          <form onSubmit={handleSubmit(onEditSubmit)} className="grid gap-4 px-4 py-4">
             <div className="grid gap-2">
               <Label htmlFor="edit-name">Name</Label>
               <Input id="edit-name" {...register("name")} />

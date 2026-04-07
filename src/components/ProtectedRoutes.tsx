@@ -9,7 +9,7 @@ interface ProtectedRoutesProps {
 }
 
 export default function ProtectedRoutes({ allowedRoles }: ProtectedRoutesProps) {
-  const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
+  const { isAuthenticated, user, isInitializing } = useSelector((state: RootState) => state.auth);
   const location = useLocation();
 
   useEffect(() => {
@@ -18,10 +18,13 @@ export default function ProtectedRoutes({ allowedRoles }: ProtectedRoutesProps) 
     }
   }, [isAuthenticated, allowedRoles, user]);
 
+  if (isInitializing) {
+    return null;
+  }
+
   if (!isAuthenticated) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
-
   if (allowedRoles && user && !allowedRoles.includes(user.role) && user.role !== "SUPER_ADMIN") {
     return <Navigate to="/attendance" replace />;
   }

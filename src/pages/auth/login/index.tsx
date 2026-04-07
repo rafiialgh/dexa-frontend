@@ -74,7 +74,7 @@ export default function LoginPage() {
                   )}
                 </div>
                 <div className='grid gap-3'>
-                  <div className='flex items-center'>
+                  {/* <div className='flex items-center'>
                     <Label htmlFor='password'>Password</Label>
                     <Link
                       to='/forgot-password'
@@ -82,7 +82,7 @@ export default function LoginPage() {
                     >
                       Forgot your password?
                     </Link>
-                  </div>
+                  </div> */}
                   <div className='relative'>
                     <Input
                       id='password'

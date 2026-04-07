@@ -54,14 +54,14 @@ export function DepartmentActions() {
           Add Department
         </Button>
       </SheetTrigger>
-      <SheetContent>
+      <SheetContent className="sm:max-w-[425px]">
         <SheetHeader>
           <SheetTitle>Add New Department</SheetTitle>
           <SheetDescription>
             Create a new department in the organization.
           </SheetDescription>
         </SheetHeader>
-        <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4 py-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4 px-4 py-4">
           <div className="grid gap-2">
             <Label htmlFor="add-name">Name</Label>
             <Input id="add-name" {...register("name")} placeholder="Enter department name" />

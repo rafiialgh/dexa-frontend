@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { getAllUsers, getUserById, updateUser, deleteUser, createUser, bulkRegister, type UpdateUserValues, type CreateUserValues } from "@/services/user/user.service"
+import { getAllUsers, getUserById, updateUser, deleteUser, createUser, type UpdateUserValues, type CreateUserValues } from "@/services/user/user.service"
 import { toast } from "sonner"
 
 export const useUser = (roleFilter: string, statusFilter: string, debouncedSearch: string, page: number, limit: number) => {
@@ -33,20 +33,6 @@ export const useCreateUser = () => {
     },
     onError: (err: any) => {
       toast.error(err.response?.data?.message || 'Failed to create user')
-    },
-  })
-}
-
-export const useBulkRegisterUser = () => {
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn: (formData: FormData) => bulkRegister(formData),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] })
-      toast.success('Bulk registration successful')
-    },
-    onError: (err: any) => {
-      toast.error(err.response?.data?.message || 'Failed to register users')
     },
   })
 }

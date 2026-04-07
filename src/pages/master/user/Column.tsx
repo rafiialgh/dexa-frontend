@@ -3,9 +3,6 @@ import { type ColumnDef } from "@tanstack/react-table";
 import type { User } from "@/services/user/user.type";
 import { ActionColumn } from "./ActionColumn";
 import { formatSnakeCase } from "@/lib/utils";
-import { Eye } from "lucide-react";
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 
 export const columns: ColumnDef<User, unknown>[] = [
   {
@@ -56,11 +53,6 @@ export const columns: ColumnDef<User, unknown>[] = [
     id: 'actions',
     cell: ({ row }) => (
       <div className="flex items-center gap-2">
-        <Button variant="ghost" size="icon-sm" asChild>
-          <Link to={`/master-data/user/${row.original.id}`}>
-            <Eye className="h-4 w-4" />
-          </Link>
-        </Button>
         <ActionColumn user={row.original} />
       </div>
     ),

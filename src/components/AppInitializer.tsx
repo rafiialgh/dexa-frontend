@@ -1,18 +1,18 @@
 import { useEffect, useRef } from 'react';
-import { useDispatch } from 'react-redux';
-import { clearUser, setUser } from '@/store/authSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { clearUser, setUser, completeInitialization } from '@/store/authSlice';
 import SplashScreen from '@/components/SplashScreen';
 import { useMe } from '@/hooks/useAuth';
+import { type RootState } from '@/store';
 
 const AppInitializer = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useDispatch();
+  const { isInitializing } = useSelector((state: RootState) => state.auth);
   const hasInitialized = useRef(false);
 
   const isStaging = import.meta.env.MODE === 'staging';
 
   const { data, isLoading, isSuccess, isError } = useMe();
-
-  console.log(data)
 
   useEffect(() => {
     if (isSuccess && data?.data) {
@@ -28,6 +28,8 @@ const AppInitializer = ({ children }: { children: React.ReactNode }) => {
         }));
 
         hasInitialized.current = true;
+      } else {
+        dispatch(completeInitialization());
       }
     }
   }, [isSuccess, data, dispatch]);
@@ -37,11 +39,10 @@ const AppInitializer = ({ children }: { children: React.ReactNode }) => {
       console.log('Failed to fetch user data, clearing auth');
       dispatch(clearUser());
       hasInitialized.current = true;
-      window.location.href = '/login';
     }
   }, [isError, dispatch]);
 
-  if (isLoading) return <SplashScreen />;
+  if (isLoading || isInitializing) return <SplashScreen />;
 
   return (
     <>
