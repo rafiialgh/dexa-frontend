@@ -30,20 +30,11 @@ import { useUserDetail, useUpdateUser, useDeleteUser } from "@/hooks/useUser";
 import { useDepartments } from "@/hooks/useDepartment";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { User } from "@/services/user/user.type";
+import { updateUserSchema, type UpdateUserValues } from "@/services/user/user.service";
 import { ROLE_LABELS } from "@/lib/utils";
-
-const userSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Invalid email address"),
-  role: z.string().min(1, "Role is required"),
-  departmentId: z.string().optional(),
-});
-
-type UserFormValues = z.infer<typeof userSchema>;
 
 interface ActionColumnProps {
   user: User;
@@ -113,21 +104,24 @@ function EditUserSheet({
     register,
     handleSubmit,
     control,
+    reset,
     formState: { errors },
-  } = useForm<UserFormValues>({
-    resolver: zodResolver(userSchema),
+  } = useForm<UpdateUserValues>({
+    resolver: zodResolver(updateUserSchema),
     values: detailResponse?.data ? {
       name: detailResponse.data.name,
       email: detailResponse.data.email,
       role: detailResponse.data.role,
       departmentId: detailResponse.data.departmentId || "none",
+      password: "",
     } : undefined
   });
 
-  const onSubmit = (data: UserFormValues) => {
+  const onSubmit = (data: UpdateUserValues) => {
     const submissionData = {
       ...data,
-      departmentId: data.departmentId === "none" ? undefined : data.departmentId
+      departmentId: data.departmentId === "none" ? undefined : data.departmentId,
+      password: data.password ? data.password : undefined,
     };
 
     updateUserMutation.mutate(
@@ -186,6 +180,13 @@ function EditUserSheet({
               )}
             </div>
             <div className="grid gap-2">
+              <Label htmlFor="password">Password (Optional)</Label>
+              <Input id="password" type="password" placeholder="Leave empty to keep current password" {...register("password")} />
+              {errors.password && (
+                <p className="text-xs text-destructive">{errors.password.message}</p>
+              )}
+            </div>
+            <div className="grid gap-2">
               <Label htmlFor="role">Role</Label>
               <Controller
                 name="role"
@@ -217,7 +218,7 @@ function EditUserSheet({
                 name="departmentId"
                 control={control}
                 render={({ field }) => (
-                  <Select onValueChange={field.onChange} value={field.value}>
+                  <Select key={`edit-dept-${departments.length}`} onValueChange={field.onChange} value={field.value}>
                     <SelectTrigger id="edit-dept">
                       <SelectValue placeholder={isLoadingDepts ? "Loading departments..." : "Select a department"} />
                     </SelectTrigger>
