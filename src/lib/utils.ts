@@ -69,3 +69,9 @@ export function formatDateFull(date: Date | null | undefined): string {
     day: "numeric",
   });
 }
+
+export function formatDate(date: Date): string {
+  return date.toLocaleDateString("en-CA", {
+    timeZone: "Asia/Jakarta",
+  });
+}

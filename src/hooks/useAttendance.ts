@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getMonthlyAttendance, getAttendanceDetail, checkIn, checkOut } from "@/services/attendance/attendance.service";
-import { format } from "date-fns";
 import { toast } from "sonner";
+import { formatDate } from "@/lib/utils";
 
 export function useMonthlyAttendance(
   month: number,
@@ -19,7 +19,7 @@ export function useAttendanceDetail(
   date: Date | null,
   userId?: string
 ) {
-  const dateStr = date ? format(date, "yyyy-MM-dd") : "";
+  const dateStr = date ? formatDate(date) : "";
   
   return useQuery({
     queryKey: ["attendance-detail", dateStr, userId],

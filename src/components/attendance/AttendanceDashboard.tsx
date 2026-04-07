@@ -6,8 +6,7 @@ import { Info } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 import { useMonthlyAttendance } from "@/hooks/useAttendance";
-import { format } from "date-fns";
-import { formatTime } from "@/lib/utils";
+import { formatDate, formatTime } from "@/lib/utils";
 
 interface AttendanceDashboardProps {
   userId?: string;
@@ -34,7 +33,7 @@ export function AttendanceDashboard({ userId, title, subtitle }: AttendanceDashb
   };
 
   const renderAttendanceCell = (date: Date) => {
-    const dateStr = format(date, "yyyy-MM-dd");
+    const dateStr = formatDate(date);
     const record = records.find((r) => r.date === dateStr);
 
     if (!record) return null;
