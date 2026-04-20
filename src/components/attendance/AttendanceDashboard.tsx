@@ -6,7 +6,7 @@ import { Info } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 import { useMonthlyAttendance } from "@/hooks/useAttendance";
-import { formatDate, formatTime } from "@/lib/utils";
+import { formatDate, formatTime, isWeekend } from "@/lib/utils";
 
 interface AttendanceDashboardProps {
   userId?: string;
@@ -19,7 +19,6 @@ export function AttendanceDashboard({ userId, title, subtitle }: AttendanceDashb
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  // Derive month (1-12) and year for the API
   const month = currentDate.getMonth() + 1;
   const year = currentDate.getFullYear();
 
@@ -32,19 +31,39 @@ export function AttendanceDashboard({ userId, title, subtitle }: AttendanceDashb
     setIsDialogOpen(true);
   };
 
+  const recordByDate = new Map(records.map((r) => [r.date, r]));
+
+  const isWeekendDate = (date: Date): boolean => {
+    const record = recordByDate.get(formatDate(date));
+    if (record) return record.status === "WEEKEND";
+    return isWeekend(date);
+  };
+
   const renderAttendanceCell = (date: Date) => {
     const dateStr = formatDate(date);
-    const record = records.find((r) => r.date === dateStr);
+    const record = recordByDate.get(dateStr);
+
+    const isDateWeekend = record ? record.status === "WEEKEND" : isWeekend(date);
+
+    if (isDateWeekend) {
+      return (
+        <div className="mt-1">
+          <Badge variant="outline" className="text-[8px] py-0 px-1 border-rose-200 bg-rose-50 text-rose-700 font-bold uppercase transition-none h-4">
+            WEEKEND
+          </Badge>
+        </div>
+      );
+    }
 
     if (!record) return null;
 
     const isAbsent = record.status === "ABSENT";
-    
+
     if (isAbsent) {
       return (
         <div className="mt-1">
           <Badge variant="outline" className="text-[8px] py-0 px-1 border-rose-200 bg-rose-50 text-rose-700 font-bold uppercase transition-none h-4">
-             ABSENT
+            ABSENT
           </Badge>
         </div>
       );
@@ -80,30 +99,30 @@ export function AttendanceDashboard({ userId, title, subtitle }: AttendanceDashb
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-         <div className="flex flex-col justify-center border bg-card p-6 hover:shadow-md transition-shadow">
-            <div className="flex flex-row items-center justify-between pb-2">
-              <span className="text-sm font-bold uppercase text-muted-foreground">Present Days</span>
-            </div>
-            <div className="mt-2 text-3xl font-black text-zinc-900">
-               {isLoading ? "..." : summary?.present ?? 0}
-            </div>
-         </div>
-         <div className="flex flex-col justify-center border bg-card p-6 hover:shadow-md transition-shadow">
-            <div className="flex flex-row items-center justify-between pb-2">
-              <span className="text-sm font-bold uppercase text-muted-foreground">Late Arrivals</span>
-            </div>
-            <div className="mt-2 text-3xl font-black text-zinc-900">
-               {isLoading ? "..." : summary?.late ?? 0}
-            </div>
-         </div>
-         <div className="flex flex-col justify-center border bg-card p-6 hover:shadow-md transition-shadow">
-            <div className="flex flex-row items-center justify-between pb-2">
-              <span className="text-sm font-bold uppercase text-muted-foreground">Absences</span>
-            </div>
-            <div className="mt-2 text-3xl font-black text-zinc-900">
-               {isLoading ? "..." : summary?.absent ?? 0}
-            </div>
-         </div>
+        <div className="flex flex-col justify-center border bg-card p-6 hover:shadow-md transition-shadow">
+          <div className="flex flex-row items-center justify-between pb-2">
+            <span className="text-sm font-bold uppercase text-muted-foreground">Present Days</span>
+          </div>
+          <div className="mt-2 text-3xl font-black text-zinc-900">
+            {isLoading ? "..." : summary?.present ?? 0}
+          </div>
+        </div>
+        <div className="flex flex-col justify-center border bg-card p-6 hover:shadow-md transition-shadow">
+          <div className="flex flex-row items-center justify-between pb-2">
+            <span className="text-sm font-bold uppercase text-muted-foreground">Late Arrivals</span>
+          </div>
+          <div className="mt-2 text-3xl font-black text-zinc-900">
+            {isLoading ? "..." : summary?.late ?? 0}
+          </div>
+        </div>
+        <div className="flex flex-col justify-center border bg-card p-6 hover:shadow-md transition-shadow">
+          <div className="flex flex-row items-center justify-between pb-2">
+            <span className="text-sm font-bold uppercase text-muted-foreground">Absences</span>
+          </div>
+          <div className="mt-2 text-3xl font-black text-zinc-900">
+            {isLoading ? "..." : summary?.absent ?? 0}
+          </div>
+        </div>
       </div>
 
       <div className="space-y-4">
@@ -111,17 +130,18 @@ export function AttendanceDashboard({ userId, title, subtitle }: AttendanceDashb
           <Info className="h-4 w-4 text-blue-500" />
           Click on any date cell to view detailed attendance records{userId ? " for this employee" : ""} or perform check-in/out actions.
         </div>
-        
+
         <div className={isLoading ? "opacity-50 pointer-events-none transition-opacity" : "transition-opacity"}>
-          <CalendarGrid 
-            date={currentDate} 
+          <CalendarGrid
+            date={currentDate}
             onDateClick={handleDateClick}
             renderCell={renderAttendanceCell}
+            isWeekendDate={isWeekendDate}
           />
         </div>
       </div>
 
-      <AttendanceDialog 
+      <AttendanceDialog
         date={selectedDate}
         open={isDialogOpen}
         onOpenChange={setIsDialogOpen}

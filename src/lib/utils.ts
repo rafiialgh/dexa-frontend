@@ -75,3 +75,17 @@ export function formatDate(date: Date): string {
     timeZone: "Asia/Jakarta",
   });
 }
+
+export function isWeekend(date: Date): boolean {
+  const day = date.getDay();
+  return day === 0 || day === 6;
+}
+
+export function formatDuration(minutes: number): string {
+  if (!minutes || minutes <= 0) return "0m";
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  if (h === 0) return `${m}m`;
+  if (m === 0) return `${h}j`;
+  return `${h}j ${m}m`;
+}

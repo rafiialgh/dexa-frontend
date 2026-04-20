@@ -15,7 +15,7 @@ import { useState, useEffect } from "react";
 import { CameraCapture } from "./CameraCapture";
 import { useSelector } from "react-redux";
 import { type RootState } from "@/store";
-import { formatTime, formatDateFull } from "@/lib/utils";
+import { formatTime, formatDateFull, isWeekend, formatDuration } from "@/lib/utils";
 
 interface AttendanceDialogProps {
   date: Date | null;
@@ -48,10 +48,13 @@ export function AttendanceDialog({ date, open, onOpenChange, userId }: Attendanc
 
   const formattedDate = formatDateFull(date);
 
-  const isWeekend = date.getDay() === 0 || date.getDay() === 6;
   const isToday = date.toDateString() === new Date().toDateString();
   const hasCheckedIn = !!detail?.checkIn?.time;
   const hasCheckedOut = !!detail?.checkOut?.time;
+
+  const isWeekendDay = detail !== undefined
+    ? detail?.status === "WEEKEND"
+    : isWeekend(date);
 
   const handleCapture = (file: File) => {
     if (captureMode === "IN") {
@@ -83,7 +86,7 @@ export function AttendanceDialog({ date, open, onOpenChange, userId }: Attendanc
                  <Badge variant={isToday ? "default" : "outline"} className="w-fit mb-2 text-[10px] h-5">
                   {isToday ? "Today" : "View Record"}
                  </Badge>
-                 {(isWeekend || detail?.status === "WEEKEND") && (
+                 {isWeekendDay && (
                    <Badge variant="destructive" className="w-fit mb-2 text-[10px] h-5">Weekend</Badge>
                  )}
                </div>
@@ -100,7 +103,7 @@ export function AttendanceDialog({ date, open, onOpenChange, userId }: Attendanc
             <DialogDescription>
               {isCapturing 
                 ? `Please take a clear photo of yourself to confirm your ${captureMode === "IN" ? "check-in" : "check-out"}.`
-                : isWeekend 
+                : isWeekendDay 
                   ? "This is a non-working day. Attendance records are usually not required." 
                   : "Manage your attendance record for this business day."}
             </DialogDescription>
@@ -156,7 +159,7 @@ export function AttendanceDialog({ date, open, onOpenChange, userId }: Attendanc
                         {detail.meta.isLate ? (
                           <>
                             <AlertCircle className="h-3 w-3" />
-                            Late ({detail.meta.lateDuration}m)
+                            Late ({formatDuration(detail.meta.lateDuration)})
                           </>
                         ) : (
                           <>
@@ -225,7 +228,7 @@ export function AttendanceDialog({ date, open, onOpenChange, userId }: Attendanc
               <Button variant="outline" className="flex-1">Close</Button>
             </DialogClose>
             
-            {isToday && !isWeekend && isOwnRecord && (
+            {isToday && !isWeekendDay && isOwnRecord && (
               <>
                 {!hasCheckedIn && (
                   <Button 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MoreHorizontal, Edit, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -104,17 +104,30 @@ function EditUserSheet({
     register,
     handleSubmit,
     control,
+    reset,
     formState: { errors },
   } = useForm<UpdateUserValues>({
     resolver: zodResolver(updateUserSchema),
-    values: detailResponse?.data ? {
-      name: detailResponse.data.name,
-      email: detailResponse.data.email,
-      role: detailResponse.data.role,
-      departmentId: detailResponse.data.departmentId || "none",
+    defaultValues: {
+      name: "",
+      email: "",
+      role: "",
+      departmentId: "none",
       password: "",
-    } : undefined
+    }
   });
+
+  useEffect(() => {
+    if (open && detailResponse?.data) {
+      reset({
+        name: detailResponse.data.name,
+        email: detailResponse.data.email,
+        role: detailResponse.data.role?.toUpperCase() || "",
+        departmentId: detailResponse.data.departmentId || detailResponse.data.department?.id || "none",
+        password: "",
+      });
+    }
+  }, [open, detailResponse, reset]);
 
   const onSubmit = (data: UpdateUserValues) => {
     const submissionData = {
@@ -191,7 +204,11 @@ function EditUserSheet({
                 name="role"
                 control={control}
                 render={({ field }) => (
-                  <Select onValueChange={field.onChange} value={field.value}>
+                  <Select 
+                    key={`role-${field.value}`} 
+                    onValueChange={field.onChange} 
+                    value={field.value || ""}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select a role" />
                     </SelectTrigger>
@@ -217,7 +234,11 @@ function EditUserSheet({
                 name="departmentId"
                 control={control}
                 render={({ field }) => (
-                  <Select key={`edit-dept-${departments.length}`} onValueChange={field.onChange} value={field.value}>
+                  <Select 
+                    key={`dept-${field.value}-${departments.length}`} 
+                    onValueChange={field.onChange} 
+                    value={field.value || "none"}
+                  >
                     <SelectTrigger id="edit-dept">
                       <SelectValue placeholder={isLoadingDepts ? "Loading departments..." : "Select a department"} />
                     </SelectTrigger>

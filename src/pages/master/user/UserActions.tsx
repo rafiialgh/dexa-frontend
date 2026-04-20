@@ -121,7 +121,11 @@ function AddUserSheet({
               name="role"
               control={control}
               render={({ field }) => (
-                <Select onValueChange={field.onChange} value={field.value || "EMPLOYEE"}>
+                <Select 
+                  key={`add-role-${field.value}`}
+                  onValueChange={field.onChange} 
+                  value={field.value || "EMPLOYEE"}
+                >
                   <SelectTrigger id="add-role">
                     <SelectValue placeholder="Select a role" />
                   </SelectTrigger>
@@ -147,7 +151,11 @@ function AddUserSheet({
               name="departmentId"
               control={control}
               render={({ field }) => (
-                <Select key={`add-dept-${departments.length}`} onValueChange={field.onChange} value={field.value || "none"}>
+                <Select 
+                  key={`add-dept-${field.value}-${departments.length}`}
+                  onValueChange={field.onChange} 
+                  value={field.value || "none"}
+                >
                   <SelectTrigger id="add-dept">
                     <SelectValue placeholder={isLoadingDepts ? "Loading departments..." : "Select a department"} />
                   </SelectTrigger>

@@ -4,9 +4,11 @@ interface CalendarGridProps {
   date: Date;
   onDateClick: (date: Date) => void;
   renderCell?: (date: Date) => React.ReactNode;
+  isDisabled?: (date: Date) => boolean;
+  isWeekendDate?: (date: Date) => boolean;
 }
 
-export function CalendarGrid({ date, onDateClick, renderCell }: CalendarGridProps) {
+export function CalendarGrid({ date, onDateClick, renderCell, isDisabled, isWeekendDate }: CalendarGridProps) {
   const year = date.getFullYear();
   const month = date.getMonth();
 
@@ -51,10 +53,6 @@ export function CalendarGrid({ date, onDateClick, renderCell }: CalendarGridProp
     return cellDate.getTime() > today.getTime();
   };
 
-  const isWeekend = (d: Date) => {
-    const day = d.getDay();
-    return day === 0 || day === 6;
-  };
 
   return (
     <div className="w-full bg-white border shadow-sm">
@@ -74,20 +72,21 @@ export function CalendarGrid({ date, onDateClick, renderCell }: CalendarGridProp
 
       <div className="grid grid-cols-7 border-collapse">
         {cells.map((cellDate, index) => {
-          const isDateWeekend = cellDate ? isWeekend(cellDate) : false;
+          const isDateWeekend = cellDate ? (isWeekendDate ? isWeekendDate(cellDate) : false) : false;
           const isDateToday = cellDate ? isToday(cellDate) : false;
           const isDateFuture = cellDate ? isFuture(cellDate) : false;
+          const isDateDisabled = cellDate ? ((isDisabled ? isDisabled(cellDate) : false) || isDateWeekend || isDateFuture) : false;
 
           return (
             <div
               key={index}
-              onClick={() => cellDate && !isDateFuture && onDateClick(cellDate)}
+              onClick={() => cellDate && !isDateDisabled && onDateClick(cellDate)}
               className={cn(
                 "min-h-[120px] p-2 border-b border-r last:border-r-0 transition-all group relative",
                 !cellDate && "bg-zinc-50/20",
-                cellDate && !isDateFuture && "cursor-pointer hover:bg-zinc-50/80",
-                isDateFuture && "bg-zinc-50/10 opacity-50 cursor-not-allowed",
-                isDateWeekend && cellDate && "bg-zinc-50/40 text-destructive font-medium",
+                cellDate && !isDateDisabled && "cursor-pointer hover:bg-zinc-50/80",
+                isDateDisabled && cellDate && "bg-zinc-50/10 opacity-60 cursor-not-allowed",
+                isDateWeekend && cellDate && "text-destructive font-medium border-rose-100",
                 isDateToday && "bg-primary/5 ring-1 ring-primary/20 ring-inset"
               )}
             >
